@@ -15,28 +15,14 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import Cookies from 'universal-cookie'
-
-const cookies = new Cookies()
-
-
+import api from '@/api'
+import { ACCES_TOKEN, REFRESH_TOKEN } from "@/constans";
 
 const LoginPage = () => {
 
   const [error, setError] = useState("")
 
   const navigate = useNavigate()
-
-  const isResponseOk = (response:Response) => {
-
-    if (response.status >= 200 && response.status <= 299) {
-      return response.json();
-    } else {
-      throw Error(response.statusText);
-    }
-  }
-
-
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -48,29 +34,17 @@ const LoginPage = () => {
     },
   })
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    fetch('/api/login/', {
-      method:'POST',
-      headers:{
-        "ContentType":'application/json',
-        "X-CSRFToken": cookies.get('csrftoken')
-      },
-      credentials:"same-origin",
-      body: JSON.stringify({
-        username:values.username,
-        password:values.password
-      })
-    })
-    .then((res:Response)=>{
-      isResponseOk(res).then(() => {
-        navigate('/')
-      })
-    })
-    .catch((err) => {
-      console.log(err)
-
+  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+    try{
+      const res = await api.post('/api/accounts/token/', { username:values.username, password:values.password })
+      localStorage.setItem(ACCES_TOKEN, res.data.access)
+      localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
+      navigate('/')
+    }
+    catch(err) {
       setError("Wrong username or password")
-    })
+      console.log(err)
+    } 
 
   }
 

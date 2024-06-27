@@ -2,7 +2,7 @@ import { useState } from 'react'
 import FormWrapper from './FormWrapper'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { registerSchema } from "@/schema"
+import { registerSchema } from '@/schema'
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,9 +15,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useNavigate } from 'react-router-dom'
-import Cookies from 'universal-cookie'
-
-const cookies = new Cookies
+import api from '@/api'
 
 const RegisterPage = () => {
 
@@ -34,34 +32,19 @@ const RegisterPage = () => {
     },
   })
   
-  function onSubmit(values: z.infer<typeof registerSchema>) {
-    fetch('/api/register/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        "X-CSRFToken": cookies.get("csrftoken"),
-      },
-      credentials: 'same-origin',
-      body: JSON.stringify({
-        username: values.username,
-        password: values.password,
-        email: values.email,
-      }),
-    })
-    .then((res) => res.json().then(data => ({ status: res.status, body: data })))
-    .then(({ status, body }) => {
-      if (status >= 200 && status <= 299) {
-        navigate('/login')
-      } else if (status == 400) {
-        setError(body.detail)
-      } else {
-        setError('Unexpected error');
+  const onSubmit = async (values: z.infer<typeof registerSchema>) => {
+    try {
+      const res = await api.post('/api/accounts/register/', { username:values.username, email:values.email, password:values.password })
+      if (res.status < 200 || res.status > 299) { 
+        setError(res.data)
+        return
       }
-    })
-    .catch((err) => {
-      setError('Something went wrong');
-      console.log(err);
-    });
+      navigate('/login')
+    } 
+    catch(err) {
+      console.log(err)
+    } 
+    
   }
     
 

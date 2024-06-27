@@ -7,7 +7,7 @@ const Home = () => {
   return (
     <div className="App w-full h-screen bg-slate-200">
       <Navbar></Navbar>
-      <MainCategories></MainCategories>
+      {/* <MainCategories></MainCategories> */}
       <Recentposts></Recentposts>
       <Footer></Footer>
     </div>

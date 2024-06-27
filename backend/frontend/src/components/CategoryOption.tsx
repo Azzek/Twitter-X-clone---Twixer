@@ -1,6 +1,7 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { FaRegUser } from "react-icons/fa";
-
+import {
+  Card
+} from "@/components/ui/card"
+4
 interface option {
     imgURL:string
     name: string
@@ -8,15 +9,9 @@ interface option {
 
 const CategoryOption = (props:option) => {
   return (
-    <div className="flex flex-col justify-center items-center cursor-pointer">
-        <Avatar className="w-12 h-12">
-            <AvatarImage className="bg-cover" src={props.imgURL} alt={props.name}/>
-            <AvatarFallback>
-                <FaRegUser />
-            </AvatarFallback>
-        </Avatar>
-        <span className="mt-3 font-bold ">{props.name}</span>
-    </div>
+    <Card className="m-0 rounded-3xl hover:scale-110 transition-transform duration-300">
+        <img src={props.imgURL} alt={props.name} className="w-full h-full object-cover"/>
+    </Card>
     
   )
 }

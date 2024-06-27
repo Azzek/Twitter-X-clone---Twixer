@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {  useContext } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import {
   NavigationMenu,
@@ -11,52 +11,24 @@ import {
 
   DrawerTrigger,
 } from "@/components/ui/drawer"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from './ui/button';
 import { FaUser } from "react-icons/fa"
 import { BiSolidLogInCircle } from "react-icons/bi";
 import { MdOutlinePostAdd } from "react-icons/md";
 import { RxHamburgerMenu } from "react-icons/rx";
 import Logo from './Logo';
+import { AuthContext } from './AuthProvider';
 
 
 const Navbar = () => {
+  
+  const isAuthenticated = useContext(AuthContext)
+  const navigate = useNavigate()
 
-  useEffect(() => {
-    getSession(),
-    []
-  })
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-
-  const getSession = () => {
-    fetch('/api/session/', {
-      credentials:'same-origin'
-    })
-    .then((res) => res.json())
-    .then((data) => { 
-      console.log(data)
-      if (data.is_authenticated) {
-        setIsAuthenticated(true)
-      } else {
-        setIsAuthenticated(false)
-      }})
-      .catch((err:Error) => {
-        console.log(err)
-      })
-  }
-
-  function logout() {
-    fetch("/api/logout/", { 
-      credentials:"same-origin"
-    })
-    .then((res) => {
-      console.log(res.json())
-      console.log("xd")
-      setIsAuthenticated(false)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+  const logout = () => {
+    localStorage.clear()
+    navigate('/')
   }
 
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' });

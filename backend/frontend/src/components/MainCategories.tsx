@@ -55,7 +55,7 @@ const MainCategories = () => {
         <div className="container p-5 items-center flex justify-center">
             <h1 className="text-6xl font-bold">Main categories</h1>
         </div>
-        <div className="container grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-9 gap-4 px-3">
+        <div className="container grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-6 gap-4 px-3">
         {categories.map((category, index) => (
             <CategoryOption key={index} imgURL={category.url} name={category.name} />
         ))}
