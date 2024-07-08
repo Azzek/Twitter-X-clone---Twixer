@@ -1,13 +1,15 @@
 from rest_framework import serializers
 import re
 from django.contrib.auth.models import User
+from .models import UserProfile, Follow
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'password', 'email']
+        fields = ['username', 'password', 'email', 'date_joined',]
         extra_kwargs = {
             'password': {'write_only': True},
+            'date_joined':{'read_only': True}
         }
 
     def validate_password(self, value):
@@ -25,3 +27,15 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
             user = User.objects.create_user(**validated_data)
             return user
+        
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['avatar','banner','birth_date','description','email','followers','followership','user','username']
+
+        
+class FollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Follow
+        fields = '__all__'
+            

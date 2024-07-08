@@ -1,6 +1,5 @@
 asgiref
 Django
- 
 djangorestframework
 djangorestframework-simplejwt
 PyJWT
