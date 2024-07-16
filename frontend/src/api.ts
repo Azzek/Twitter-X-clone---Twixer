@@ -5,7 +5,7 @@ const api = axios.create({
     baseURL: 'http://localhost:8000'
 })
 
-api.interceptors.request.use(
+const setAuthToken = api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem(ACCES_TOKEN)
         if (token) {
@@ -19,3 +19,4 @@ api.interceptors.request.use(
 )
 
 export default api
+export {setAuthToken, api}

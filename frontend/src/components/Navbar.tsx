@@ -27,6 +27,7 @@ import { Button } from './ui/button';
 import { GrHomeRounded } from "react-icons/gr";
 import { FaUser } from "react-icons/fa";
 import { BiSolidLogInCircle } from "react-icons/bi";
+import { FaSearch } from "react-icons/fa";  
 import { FaRegUser } from "react-icons/fa6";
 import { MdOutlinePostAdd } from "react-icons/md";
 import { RxHamburgerMenu } from "react-icons/rx";
@@ -116,30 +117,38 @@ const Navbar = () => {
       </div>
     </NavigationMenu>
   ) : (
-    <div className="h-screen w-1/4 bg-black flex flex-col items-center gap-3 pt-3 max-h-screen fixed top-0 left-0">
+    <div className="h-screen w-[23%] bg-black flex flex-col items-center gap-3 pt-3 max-h-screen fixed top-0 left-0">
       <Logo/>
-      <div className="w-3/4 h-full self-end flex flex-col items-start gap-3 mt-3 ">
+      <div className="w-[80%] h-full self-end flex flex-col items-start gap-3 mt-3 ">
       <Link to={`/`} className='w-full'>
           <NavigationMenuItem className="w-full flex flex-1 items-center justify-between space-x-2">
             <Button className="w-2/3 border-gray-700  bg-black text-2xl flex justify-start">
-              <GrHomeRounded className="mr-1 h-8 w-8 " />
-              <span className="ml-4 p-0 font-normal">Home</span>
+              <GrHomeRounded className="h-7 w-7 self-end transform -translate-y-[-5px]  text-gray-200" />
+              <span className="ml-2 p-0 font-ligh text-xl text-gray-200">Home</span>
             </Button>
           </NavigationMenuItem>
         </Link>
         <Link to={`/${userData?.username}`} className='w-full'>
           <NavigationMenuItem className="w-full flex flex-1 items-center justify-between space-x-2">
             <Button className="w-2/3 border-gray-700  bg-black text-2xl flex justify-start">
-              <FaRegUser className="mr-1 h-8 w-8 " />
-              <span className="ml-4 p-0 font-normal">Profile</span>
+              <FaRegUser className="h-7 w-7 self-end transform -translate-y-[-5px]  text-gray-200"/>
+              <span className="ml-2 p-0 font-ligh text-xl text-gray-200">Profile</span>
             </Button>
           </NavigationMenuItem>
         </Link>
         <Link to="/bookmarks"> 
           <NavigationMenuItem className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
             <Button className="hover:bg-gray-700 bg-black text-2xl flex justify-between relative">
-              <IoBookmarksOutline className="h-8 w-8 self-end transform -translate-y-[-5px]"/>
-              <span className="ml-4 p-0 font-normal">Bookmarks</span>
+              <IoBookmarksOutline className="h-7 w-7 self-end transform -translate-y-[-5px]  text-gray-200"/>
+              <span className="ml-2 p-0 font-ligh text-xl text-gray-200">Bookmarks</span>
+            </Button>
+          </NavigationMenuItem>
+        </Link>
+        <Link to="/explore"> 
+          <NavigationMenuItem className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+            <Button className="hover:bg-gray-700 bg-black text-2xl flex justify-between relative">
+              <FaSearch  className="h-7 w-7 self-end transform -translate-y-[-5px]  text-gray-200"/>
+              <span className="ml-4 p-0 font-light text-xl text-gray-200">Explore</span>
             </Button>
           </NavigationMenuItem>
         </Link>
@@ -154,7 +163,7 @@ const Navbar = () => {
       </Dialog>
       <div className="flex justify-center w-full">
           <Avatar className='h-14 w-14 self-end m-3'>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+            <AvatarImage src={userData?.avatar} alt="avatar image" />
             <AvatarFallback>
               <FaUser />
             </AvatarFallback>

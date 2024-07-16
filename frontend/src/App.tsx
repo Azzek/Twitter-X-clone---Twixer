@@ -11,7 +11,7 @@ export default function App() {
         <Route path="/" element={<AuthProvider><Home/></AuthProvider>}/>
         <Route path="/register" element={<RegisterPage/>}/>
         <Route path="/login" element={<AuthProvider><LoginPage/></AuthProvider>}/>
-        <Route path="/:username" element={<AuthProvider><ProfilePage/></AuthProvider>}/>
+        <Route path="/:profUsername" element={<AuthProvider><ProfilePage/></AuthProvider>}/>
       </Routes>
   )
 }

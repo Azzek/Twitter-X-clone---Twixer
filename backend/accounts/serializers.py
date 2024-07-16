@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.shortcuts import get_list_or_404
 import re
 from django.contrib.auth.models import User
 from .models import UserProfile, Follow
@@ -29,9 +30,15 @@ class UserSerializer(serializers.ModelSerializer):
             return user
         
 class UserProfileSerializer(serializers.ModelSerializer):
+    blocked_users = serializers.SerializerMethodField()
+    
     class Meta:
         model = UserProfile
-        fields = ['avatar','banner','birth_date','description','email','followers','followership','user','username']
+        fields = '__all__'
+        
+    def get_blocked_users(self, obj):
+        blocked = Blocked.objects.filter(first_user=obj)
+        return [b.second_user.user.id for b in blocked]
 
         
 class FollowSerializer(serializers.ModelSerializer):
@@ -39,3 +46,10 @@ class FollowSerializer(serializers.ModelSerializer):
         model = Follow
         fields = '__all__'
             
+from rest_framework import serializers
+from .models import Blocked
+
+class BlockedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Blocked
+        fields = ['first_user', 'second_user']

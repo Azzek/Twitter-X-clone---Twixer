@@ -4,9 +4,17 @@ html, body, label {
   font-family: 'Roboto', sans-serif;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
 .thin-border {
   border-width: 0.1px;
   border-color: rgba(255, 255, 255, 0.466);
+  border-radius: 20px;
 }
 
 @tailwind base;

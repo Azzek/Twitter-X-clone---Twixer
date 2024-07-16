@@ -36,7 +36,6 @@
       
     const onSubmit = async (e:FormEvent<HTMLFormElement>) => {
       e.preventDefault()
-      console.log("xd")
       try {
         const formData = new FormData();
       
@@ -72,7 +71,7 @@
     
     return (
       <>
-      <div className='items-center w-full pt-4 px-4 self-center thin-border'>
+      <div className='items-center w-full pt-4 px-4 self-center'>
           <form 
           onSubmit={onSubmit}                      
           className='space-y-6' 

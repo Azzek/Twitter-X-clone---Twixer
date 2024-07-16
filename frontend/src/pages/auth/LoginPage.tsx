@@ -21,7 +21,6 @@ import { useAuth } from '@/components/AuthProvider'
 
 const LoginPage = () => {
 
-  const { login } = useAuth()
   const [error, setError] = useState("")
 
   const navigate = useNavigate()
@@ -35,15 +34,26 @@ const LoginPage = () => {
       confirmPassword:""
     },
   })
+  const login = async (username:string, password:string) => {
+    try{
+        const res = await api.post('/api/accounts/token/', { username, password })
+        localStorage.setItem(ACCES_TOKEN, res.data.access)
+        localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
+        navigate('/')
+      }
+      catch(err) {
+        setError(err.response.data.detail)
+      } 
+}
 
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     login(values.username, values.password)
+
   }
 
   return (
     <div className='bg-slate-900 w-screen h-screen flex justify-center align-middle items-center'>
-        <FormWrapper title='Login' label='Login to your account' backButtonLabel='Dont have an account? Register here' backButtonHref='/Register'>
-            <h1>{error}</h1>
+        <FormWrapper title='Login' label={error? error : 'Login to your account'} backButtonLabel='Dont have an account? Register here' backButtonHref='/Register'>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
                 <div className='space-y-4'>

@@ -46,14 +46,13 @@ const SearchInput = () => {
       {
         query.length > 0?
         results.map((user) => (
-          <Link to={`/${user.username}`}>
+          <Link to={`/${user.username}`} key={user.user}>
             <div className="flex items-start">
-              <Avatar className=" ml-2 mt-2">
-                <AvatarImage src={user?.avatar || ''} />
-                <AvatarFallback >
-                    <FaUserCircle className="w-10 h-10"/>
-                </AvatarFallback>
-              </Avatar>
+            <Avatar>
+              <AvatarImage src={user.avatar} alt="user avatar" className="flex w-12 h-12 rounded-full bg-muted self-end mt-3"/>
+              <AvatarFallback><FaUserCircle/></AvatarFallback>
+            </Avatar>
+
               <div className="pt-1">
                 <span className='ml-4 mt-1 text-lg font-bold'>{user.username}</span>
                 <p className="ml-4 font-thin text-gray-400">{ user.description }</p>

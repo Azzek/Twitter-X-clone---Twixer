@@ -1,8 +1,9 @@
 import { createContext, useState, ReactNode, useEffect, useContext } from "react";
 import { ACCES_TOKEN, REFRESH_TOKEN } from "@/constans"; // Ensure this path is correct
 import { jwtDecode } from "jwt-decode";
-import api from "@/api"; // Ensure this path is correct
 import { useNavigate } from "react-router-dom";
+import api from "@/api";
+import Logo from "./Logo";
 
 interface AuthProviderProps {
   children: ReactNode; 
@@ -12,20 +13,25 @@ interface UserDataTypes {
     username: string,
     email:string,
     user: number,
+    description:string | undefined
     avatar:string,
-    baner:string,
+    banner:string,
     date_joined:string,
     followership:number[],
-    followers:number[]
+    followers:number[],
+    blocked_users:number[]
   }
 
 interface ContextTypes {
     isAuthenticated: boolean;
-    follow:(following:number)=>void,
+    addFollow:(whoToFollow:number)=>any,
+    removeFollow:(whoToUnfollow:number)=>any,
+    blockUser:(whoToBlock:number)=>any,
+    unBlockUser:(whoToUnBlock:number)=>any,
     deletePost:(postId:number)=>void,
     userData:UserDataTypes | null,
     logout:() =>void,
-    login:(username:string, password:string) =>void
+    // login:(username:string, password:string) =>any
   }
   
 interface TokenTypes {
@@ -45,17 +51,23 @@ export const useAuth = () => {
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userData, setUserData] = useState<UserDataTypes | null>(null)
 
   useEffect(() => {
     const authenticate = async () => {
-        auth()
-        getUserData()
+      try {
+        await auth();
+        await getUserData();
+      } catch {
+        navigate('/login');
+      }
     };
     authenticate();
-    console.log(isAuthenticated)
+    setIsLoading(false)
   }, []);
+
 
   const getToken = () => {
     const token = localStorage.getItem(ACCES_TOKEN);
@@ -87,6 +99,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         navigate('/login');
       }
     } catch (err) {
+      console.log(err)
       setIsAuthenticated(false);
       navigate('/login');
     }
@@ -102,28 +115,17 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             await refreshToken();
         } else {
             setIsAuthenticated(true);
-            navigate('/')
         }
+    } else {
+      setIsAuthenticated(false)
+      navigate('/')
     }
-    };
+  };
 
     const logout = () => {
         localStorage.clear();
         navigate('/');
       };
-
-    const login = async (username:string, password:string) => {
-        try{
-            const res = await api.post('/api/accounts/token/', { username, password })
-            localStorage.setItem(ACCES_TOKEN, res.data.access)
-            localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
-            setIsAuthenticated(true)
-            navigate('/')
-          }
-          catch(err) {
-            console.log(err)
-          } 
-    }
     
     const deletePost = async (postId:number) => {
         try {
@@ -139,34 +141,94 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         try {
             const res = await api.get(`/api/accounts/id/${token?.user_id}`);
             setUserData(res.data);
+            console.log(res.data)
         } catch (err) {
             console.error(err);
         }
       };
 
-    const follow = async (following:number) => {
-        try {
-            api.post('/api/accounts/follow/', { follows:following, follower:userData?.user})
+    const removeFollow = (whoToUnfollow:number) => {
+      try {
+        api.delete(`/api/accounts/unfollow/${whoToUnfollow}`)
+        if (whoToUnfollow && userData) {
+          let uc = userData;
+          uc.followership = userData.followership.filter((f)=> f!==userData?.user);
+          setUserData(uc)
+        }
+       } catch(err) {
+          console.log(err)
+        }
+        getUserData()
+        
+    } 
+  
+    const addFollow = (whoToFollow:number) => {
+      try {
+        api.post('/api/accounts/follow/', { follows:whoToFollow, follower:userData?.user})
+        
+        if (whoToFollow && userData) {
+          let uc = userData;
+          // uc.followership.push(whoToFollow);
+          setUserData(uc)
+        } 
+        getUserData()
         } 
         catch(err) {
             console.log(err)
         }
     }
-
+    
+    const blockUser = async (whoToBlock:number) => {
+      try {
+        await api.post(`/api/accounts/block/${whoToBlock}/`)
+        let cu = userData
+        cu?.blocked_users.push(whoToBlock)
+        setUserData(cu)
+      } catch(err) {
+        console.log(err)
+      }
+  }  
+    const unBlockUser = async (whoToUnBlock:number) => {
+      try {
+        await api.delete(`/api/accounts/block/${whoToUnBlock}/`)
+        let cu = userData
+        cu?.blocked_users.filter((f)=>f!=whoToUnBlock)
+        setUserData(cu)
+      } catch(err) {
+        console.log(err)
+      }
+  }  
   const values: ContextTypes = {
     isAuthenticated,
-    follow,
+    removeFollow,
+    addFollow,
+    blockUser,
+    unBlockUser,
     deletePost,
     userData,
     logout,
-    login
+    // login
   };
 
   return (
-    <AuthContext.Provider value={values}>
-      {children}
-    </AuthContext.Provider>
-  );
+  <>
+    {
+      !isLoading?
+      (
+        <AuthContext.Provider value={values}>
+          {children}
+        </AuthContext.Provider>
+      )
+      :
+      (
+        <div className="h-full w-full justify-center align-middle">
+          <Logo/>
+        </div>
+        
+    )
+    }
+  </>
+  )
 };
 
 export default AuthProvider;
